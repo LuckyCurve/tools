@@ -1,4 +1,4 @@
-## some tools using Java implements
+## some tools implemented using Java
 
 Achieved:
 
