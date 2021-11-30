@@ -2,10 +2,13 @@ package cn.luckycurve.core.spider;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * @author LuckyCurve
@@ -14,9 +17,7 @@ public class ProxySpider {
 
     static final String FLGA_STR = "clash订阅链接：";
 
-    public static void main(String[] args) throws IOException {
-        proxyRedirect();
-    }
+    private static final Logger logger = getLogger(ProxySpider.class);
 
     public static List<String> proxyRedirect() throws IOException {
         Document documentForCur = Jsoup.connect("https://www.cfmem.com/search/label/free").get();
@@ -24,6 +25,7 @@ public class ProxySpider {
         List<String> res = new ArrayList<>();
 
         documentForCur.body().getElementsByClass("entry-title").forEach(element -> {
+            logger.info("获取配置源：{}", element.toString());
             String url = element.getElementsByTag("a").attr("href");
             try {
                 res.add(innerUrlParse(url));

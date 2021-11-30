@@ -10,6 +10,8 @@ Main class : cn.luckycurve.core.file.FileEdition
 
 Main class : cn.luckycurve.core.file.TrackerFormat
 
-* clash proxy info (Using Netty)
+* clash proxy info (Using Netty, Deprecated)
 
 Main class : cn.luckycurve.server.ProxyRedirectServer
+
+Using Spring rebuild, Model: proxy-spring
