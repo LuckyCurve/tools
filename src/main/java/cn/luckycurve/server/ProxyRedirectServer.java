@@ -17,7 +17,6 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @author LuckyCurve
  */
 public class ProxyRedirectServer {
-
     private final Logger logger = getLogger(getClass());
 
     private final Integer port;
@@ -59,6 +58,4 @@ public class ProxyRedirectServer {
     public static void main(String[] args) throws InterruptedException {
         new ProxyRedirectServer(8080).start();
     }
-
-
 }
