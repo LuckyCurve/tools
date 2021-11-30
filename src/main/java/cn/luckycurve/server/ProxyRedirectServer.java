@@ -20,7 +20,6 @@ public class ProxyRedirectServer {
 
     private final Logger logger = getLogger(getClass());
 
-
     private final Integer port;
 
     public ProxyRedirectServer(Integer port) {

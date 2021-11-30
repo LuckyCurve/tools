@@ -28,6 +28,7 @@ public class ProxyRedirectHandler extends SimpleChannelInboundHandler<FullHttpRe
         headers.set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_METHODS, "POST,GET");
         headers.set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
         headers.set(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
+        headers.set(HttpHeaderNames.CACHE_CONTROL, "no-store");
         headers.set(HttpHeaderNames.LOCATION, url);
 
         ctx.writeAndFlush(response)
