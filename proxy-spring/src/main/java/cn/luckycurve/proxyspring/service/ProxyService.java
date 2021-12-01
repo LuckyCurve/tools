@@ -4,9 +4,7 @@ import cn.luckycurve.proxyspring.cache.ProxyCache;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.CharsetUtils;
 import org.apache.http.util.EntityUtils;
-import org.apache.tomcat.util.digester.DocumentProperties;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -60,7 +58,7 @@ public class ProxyService {
      *
      * @return
      */
-    public List<List<String>> collectData() throws IOException {
+    private List<List<String>> collectData() throws IOException {
         Document documentForCur = Jsoup.connect("https://www.cfmem.com/search/label/free").get();
 
         List<List<String>> res = new LinkedList<>();

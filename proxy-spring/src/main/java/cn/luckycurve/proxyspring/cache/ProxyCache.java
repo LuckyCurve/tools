@@ -54,11 +54,12 @@ public class ProxyCache {
     }
 
     public void set(List<List<String>> temp) {
-        temp.forEach(element -> {
-            if (!list.contains(element)) {
-                list.add(element);
+        for (int i = temp.size() - 1; i >= 0; i--) {
+            List<String> element = temp.get(i);
+            if (!this.list.contains(element)) {
+                this.list.add(element);
             }
-        });
+        }
 
         // 防止数据膨胀
         while (list.size() > size) {
