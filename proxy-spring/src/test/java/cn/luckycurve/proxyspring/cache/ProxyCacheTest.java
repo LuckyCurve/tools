@@ -11,13 +11,4 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class ProxyCacheTest {
 
-    @Test
-    public void test() {
-        ProxyCache cache = new ProxyCache();
-
-        cache.set(new ArrayList<>());
-
-        assertNotNull(cache.get());
-    }
-
 }

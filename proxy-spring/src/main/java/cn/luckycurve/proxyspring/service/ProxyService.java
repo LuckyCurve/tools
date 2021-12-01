@@ -1,19 +1,23 @@
 package cn.luckycurve.proxyspring.service;
 
 import cn.luckycurve.proxyspring.cache.ProxyCache;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.CharsetUtils;
+import org.apache.http.util.EntityUtils;
+import org.apache.tomcat.util.digester.DocumentProperties;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -26,80 +30,49 @@ public class ProxyService {
     @Resource
     ProxyCache cache;
 
-    public List<String> list() throws IOException {
-        return getCrawlConfigurationSource().stream()
-                .map(Node::toString).collect(Collectors.toList());
-    }
-
-
-    public String proxy(List<Integer> list) throws IOException {
-        List<Element> source = getCrawlConfigurationSource();
-
-        List<Element> cur;
-
-        if (list == null) {
-            logger.info("list参数为空，默认全选");
-            cur = source;
-        } else {
-            cur = new ArrayList<>();
-
-            for (Integer i : list) {
-                cur.add(source.get(i % source.size()));
-            }
+    public String proxy(Integer num) throws IOException {
+        if (cache.getList().isEmpty() || cache.outDate()) {
+            cache.set(collectData());
         }
 
-        List<String> target = new ArrayList<>(cur.size());
-
-        cur.forEach(element -> {
-            try {
-                target.add(innerElementParse(element));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        List<String> target = cache.get(num);
 
         // Url拼接
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < target.size(); i++) {
-            logger.info("添加第 {} 个源。。。成功", i + 1);
             builder.append(target.get(i));
             if (i != target.size() - 1) {
                 builder.append("|");
             }
         }
 
-        return START + URLEncoder.encode(builder.toString());
+        CloseableHttpResponse response = HttpClients.createDefault().execute(new HttpGet(START + URLEncoder.encode(builder.toString())));
+
+        return EntityUtils.toString(response.getEntity(), "UTF-8");
     }
 
-    public static final String FLGA_STR = "clash订阅链接：";
-
-    public static final String START = "https://subcon.dlj.tf/sub?target=clash&new_name=true&url=";
+    public static final String START = "http://localhost:25500/sub?target=clash&new_name=true&url=";
 
     private static final Logger logger = getLogger(ProxyService.class);
 
     /**
-     * 获取待抓取配置源信息
+     * 完成数据采集，缓存失效时完成该方法调用
      *
-     * @return 包含Title和其他标签的配置源信息
+     * @return
      */
-    private List<Element> getCrawlConfigurationSource() throws IOException {
-        List<Element> list = cache.get();
-
-        if (list != null) {
-            return list;
-        }
-
-        // 缓存失效
+    public List<List<String>> collectData() throws IOException {
         Document documentForCur = Jsoup.connect("https://www.cfmem.com/search/label/free").get();
 
-        List<Element> res = new ArrayList<>();
+        List<List<String>> res = new LinkedList<>();
 
         documentForCur.body().getElementsByClass("entry-title").forEach(element -> {
-            logger.info("获取配置源：{}", element.toString());
-            res.add(element);
+            try {
+                res.add(innerElementParse(element));
+                logger.info("采集配置源 {} 信息。。。成功", element.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
-
-        cache.set(res);
 
         return res;
     }
@@ -110,15 +83,27 @@ public class ProxyService {
      * @param src 待抓取配置源
      * @return 节点列表
      */
-    private String innerElementParse(Element src) throws IOException {
+    private List<String> innerElementParse(Element src) throws IOException {
         String url = src.getElementsByTag("a").attr("href");
 
         Document document = Jsoup.connect(url).get();
 
-        return document.body().getElementsByTag("span").eachText()
-                .stream().filter(s -> s.startsWith(FLGA_STR))
-                .map(s -> s.substring(s.indexOf(FLGA_STR) + FLGA_STR.length()))
-                .findFirst().get();
+        LinkedList<String> list = new LinkedList<>();
+
+        document.select("span[role=presentation]span[style=box-sizing: border-box; padding-right: 0.1px;]").forEach(element -> {
+            String candidate = element.text();
+            if (!candidate.contains("\n")) {
+                list.add(candidate);
+            }
+        });
+
+        list.removeLast();
+        list.removeLast();
+
+        return list;
     }
 
+    public Integer num() {
+        return cache.getList().size();
+    }
 }

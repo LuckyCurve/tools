@@ -19,19 +19,13 @@ public class ProxyController {
     @Resource
     ProxyService proxyService;
 
-    @GetMapping("/list")
-    public List<String> list() throws IOException {
-        return proxyService.list();
-    }
-
     @GetMapping("/num")
     public Integer num() throws IOException {
-        return proxyService.list().size();
+        return proxyService.num();
     }
 
     @GetMapping("/proxy")
-    public RedirectView proxy(@RequestParam(required = false) List<Integer> list) throws IOException {
-        return new RedirectView(proxyService.proxy(list));
+    public String proxy(@RequestParam(value = "num", required = false) Integer num) throws IOException {
+        return proxyService.proxy(num);
     }
-
 }
