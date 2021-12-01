@@ -17,7 +17,7 @@ class ProxyCacheTest {
 
         cache.set(new ArrayList<>());
 
-        assertNull(cache.get());
+        assertNotNull(cache.get());
     }
 
 }
