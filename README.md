@@ -15,3 +15,6 @@ Main class : cn.luckycurve.core.file.TrackerFormat
 Main class : cn.luckycurve.server.ProxyRedirectServer
 
 Using Spring rebuild, Model: proxy-spring
+
+* proxy pool info collect
+

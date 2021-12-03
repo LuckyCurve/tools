@@ -32,7 +32,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>cn.luckycurve.server.ProxyRedirectServer</mainClass>
+                            <mainClass>cn.luckycurve.core.file.ProxyPersistence</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

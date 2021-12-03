@@ -1,18 +1,17 @@
 package cn.luckycurve.proxyspring.cache;
 
 import cn.hutool.core.date.DateUtil;
-import cn.luckycurve.proxyspring.service.ProxyService;
 import lombok.Data;
-import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author LuckyCurve
