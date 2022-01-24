@@ -6,11 +6,11 @@ import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 持久化到指定文件目录
@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class ProxyPersistence {
 
-    public static final String FILE_PATH = "F:\\OneDrive - for personal\\Entertainment\\Clash.txt";
+    public static final String FILE_PATH = "F:\\OneDrive - for personal\\Entertainment\\changfeng\\blog.txt";
 
     private static final Logger logger = LoggerFactory.getLogger(ProxyPersistence.class);
 
@@ -30,17 +30,27 @@ public class ProxyPersistence {
             file.createNewFile();
         }
 
-        try (final FileWriter writer = new FileWriter(file, true)) {
-            final List<String> data = collectData();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 
-            for (String s : data) {
-                writer.write(s + "\n");
+            Set<String> set = new HashSet<>();
+
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                set.add(line.trim());
             }
 
-            writer.write("\n\n\n\n");
-        }
+            set.addAll(collectData());
 
-        logger.info("写入成功");
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+
+                for (String s : set) {
+                    writer.write(s + "\n");
+                }
+
+                logger.info("数据写入成功");
+            }
+        }
     }
 
 
