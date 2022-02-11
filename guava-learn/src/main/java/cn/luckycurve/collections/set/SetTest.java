@@ -98,4 +98,55 @@ public class SetTest {
         assertEquals(set.size(), 5);
         assertThat(set).startsWith(1).endsWith(5);
     }
+
+
+    /**
+     * marked annotation @bate means not stable
+     * <p>
+     * using rangeSet can hold many disconnected range and auto connect them
+     */
+    @Test
+    public void rangeSet() {
+        final TreeRangeSet<Integer> set = TreeRangeSet.create();
+        set.add(Range.closed(1, 10));
+        set.add(Range.closed(12, 15));
+
+        assertThat(set.asRanges().size()).isEqualTo(2);
+
+        set.add(Range.closed(10, 12));
+
+        assertThat(set.asRanges().size()).isEqualTo(1);
+    }
+
+    /**
+     * useful Set, it allow add duplicated element instead using count
+     */
+    @Test
+    public void usingMultiSet() {
+        final HashMultiset<String> multiset = HashMultiset.create();
+
+        multiset.add("John");
+        multiset.add("Adam", 3);
+        multiset.add("John");
+
+        assertEquals(multiset.count("John"), 2);
+        assertEquals(multiset.count("Adam"), 3);
+
+        multiset.remove("John");
+        assertEquals(multiset.count("John"), 1);
+    }
+
+    @Test
+    public void sortMultiSet() {
+        final HashMultiset<String> multiset = HashMultiset.create();
+
+        multiset.add("John");
+        multiset.add("Adam", 3);
+        multiset.add("John");
+
+        final ImmutableList<String> sort = Multisets.copyHighestCountFirst(multiset).elementSet().asList();
+
+        assertThat(sort.get(0)).isEqualTo("Adam");
+        assertThat(sort.get(1)).isEqualTo("John");
+    }
 }
