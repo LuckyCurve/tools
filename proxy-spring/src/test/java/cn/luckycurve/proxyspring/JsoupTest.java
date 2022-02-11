@@ -3,7 +3,6 @@ package cn.luckycurve.proxyspring;
 import cn.hutool.core.date.DateUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
